@@ -6,12 +6,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Rashedin Islam <rashedinislam.06@gmail.com>",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "@types/node": "^24.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "prisma": "^6.12.0"
   }
 }
