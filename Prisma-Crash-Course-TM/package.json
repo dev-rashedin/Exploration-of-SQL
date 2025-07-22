@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.12.0",
+    "express-error-toolkit": "^1.1.2",
+    "http-status-toolkit": "^2.0.0",
     "prisma": "^6.12.0"
   }
 }

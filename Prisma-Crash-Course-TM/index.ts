@@ -35,7 +35,7 @@ async function main() {
   // })
 
   // get all articles
-  // const articles = await prisma.article.findMany()
+  const articles = await prisma.article.findMany()
 
 
   // create user and article and associate them
@@ -66,25 +66,42 @@ async function main() {
   // })
 
   // loop over Saras articles
-  users.forEach(user => {
-    users.forEach(user => {
-      console.log(`User: ${user.name}, Email: ${user.email}`)
-      console.log('Articles:');
-      user.articles.forEach(article => {
-        console.log(`- Title: ${article.title}, Body: ${article.body}`)     
-      })
-      console.log('\n')
+  // users.forEach(user => {
+  //   users.forEach(user => {
+  //     console.log(`User: ${user.name}, Email: ${user.email}`)
+  //     console.log('Articles:');
+  //     user.articles.forEach(article => {
+  //       console.log(`- Title: ${article.title}, Body: ${article.body}`)     
+  //     })
+  //     console.log('\n')
       
       
-    })
-  })
-      
+  //   })
+  // })
+  
+  
+  // update data
+  // const user = await prisma.user.update({
+  //   where: {
+  //     id: 1
+  //   },
+  //   data: {
+  //     name: 'dev-rashedin'
+  //   }
+  // })
+  
+  // remove data
+  // const article = await prisma.article.delete({
+  //   where: {
+  //     id: 2
+  //   }
+  // })
 
   // console.log(user)
   // console.log(users)
   // console.log(article)
   
-// console.log(articles)
+console.log(articles)
   
 }
 
