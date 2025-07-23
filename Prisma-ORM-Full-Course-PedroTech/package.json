@@ -10,7 +10,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Rashedin Islam <rashedinislam.06@gmail.com>",
   "license": "ISC",
   "description": "",
   "dependencies": {

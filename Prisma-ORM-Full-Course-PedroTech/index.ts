@@ -7,7 +7,9 @@ const app = express();
 app.use(express.json());
 
 
-
+app.get('/', (_req, res) => {
+  res.status(StatusCodes.OK).send('Hello World!')
+});
 
 app.use(notFoundHandler);
 app.use(globalErrorHandler)
