@@ -1,5 +1,7 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import { globalErrorHandler, notFoundHandler } from "express-error-toolkit";
+import { StatusCodes } from "http-status-toolkit";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -13,7 +15,7 @@ app.get("/users", async (_, res) => {
       },
     },
   });
-  res.json(users);
+  res.status(StatusCodes.OK).json(users);
 });
 
 app.put("/users", async (_, res) => {
@@ -24,15 +26,19 @@ app.put("/users", async (_, res) => {
       isMarried: true,
     },
   });
-  res.json(updatedUser);
+  res.status(StatusCodes.CREATED).json(updatedUser);
 });
 
 app.delete("/users", async (_, res) => {
   const deletedUsers = await prisma.user.deleteMany({
     where: { age: { gt: 30 } },
   });
-  res.json(deletedUsers);
+  res.status(StatusCodes.OK).json(deletedUsers);
 });
+
+
+app.use(notFoundHandler);
+app.use(globalErrorHandler)
 
 app.listen(4000, () => {
   console.log("Server running on port 4000");
