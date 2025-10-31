@@ -1,15 +1,12 @@
-# 🧠 Prisma + PostgreSQL Exploration
+# 🧠 Exploration of SQL
 
-This repository documents my hands-on journey of learning **Prisma ORM** with **PostgreSQL**. I'm exploring schema design, relationships, query patterns, and real-world use cases.
+This repository documents my hands-on journey of learning SQL. I'm exploring schema design, relationships, query patterns, and real-world use cases.
 
 ---
 
 ## 📚 Resources I'm Learning From
 
 - [Prisma Official Docs](https://www.prisma.io/docs)
-- [Traversy Media: Prisma ORM Crash Course (YouTube)](https://youtu.be/CYH04BJzamo?si=mdCQH64jNb3GkDIt)
-- [PostgreSQL Crash Course](https://youtu.be/zw4s3Ey8ayo?si=DkoEZ88GEVG1VFdV)
-- [Prisma ORM full Course](https://youtu.be/gimSKEsWYb4?si=Yse6BNCDviLvXb8X)
 
 ---
 
@@ -30,14 +27,3 @@ This repository documents my hands-on journey of learning **Prisma ORM** with **
 - Querying with `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`
 - Creating relational database structure for real-world apps
 
----
-
-## 📂 Folder Structure
-
-```bash
-.
-├── prisma/
-│   ├── schema.prisma     # Prisma schema definition
-│   └── migrations/       # Prisma migration files
-├── src/                  # Query experiments and examples
-└── README.md
