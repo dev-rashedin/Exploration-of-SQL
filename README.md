@@ -7,6 +7,7 @@ This repository documents my hands-on journey of learning SQL. I'm exploring sch
 ## 📚 Resources I'm Learning From
 
 - [Prisma Official Docs](https://www.prisma.io/docs)
+- [SQL Crash Course](https://youtu.be/ULdVndYtdYs?si=mKCqukgq-_P8HZeO)
 
 ---
 
