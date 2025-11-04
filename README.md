@@ -8,6 +8,7 @@ This repository documents my hands-on journey of learning SQL. I'm exploring sch
 
 - [Prisma Official Docs](https://www.prisma.io/docs)
 - [SQL Crash Course](https://youtu.be/ULdVndYtdYs?si=mKCqukgq-_P8HZeO)
+- [postgreSQL Crash Course](https://youtu.be/S86phsLFW1E?si=043HSIZIsxSMaYhG)
 
 ---
 
