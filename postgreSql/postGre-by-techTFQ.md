@@ -1,6 +1,90 @@
 <!-- CREATE DATABASE demo; -->
 
 ```sql
+CREATE TABLE products
+(
+    product_id     INT PRIMARY KEY,
+    product_name   VARCHAR(50),
+    price          FLOAT,
+    release_date   DATE
+);
+```
+
+```sql
+CREATE TABLE products
+(
+    product_id     INT,
+    product_name   VARCHAR(50),
+    price          FLOAT,
+    release_date   DATE,
+		CONSTRAINT pk_prod PRIMARY KEY (product_id)
+);
+```
+
+```sql
+CREATE TABLE products
+(
+    product_id     INT,
+    product_name   VARCHAR(50),
+    price          FLOAT,
+    release_date   DATE,
+		CONSTRAINT pk_prod PRIMARY KEY (product_id, product_name)
+);
+```
+
+> This is a composite primary key
+
+
+
+```sql
+INSERT INTO products (product_id, product_name, price, release_date) 
+VALUES (1, 'Samsung Galaxy S24', 899.0, to_date('18-01-2024', 'dd-mm-yyyy'));
+
+INSERT INTO products (product_id, product_name, price, release_date) 
+VALUES (2, 'Google Pixel 8 Pro', 999.0, to_date('12-10-2023', 'dd-mm-yyyy'));
+
+INSERT INTO products (product_id, product_name, price, release_date) 
+VALUES (3, 'OnePlus 12', 749.99, to_date('05-02-2024', 'dd-mm-yyyy'));
+```
+
+
+```sql
+CREATE TABLE products
+(
+    product_id     INT GENERATED ALWAYS AS IDENTITY,
+    product_name   VARCHAR(50),
+    price          FLOAT,
+    release_date   DATE,
+);
+```
+
+> This will always create an unique product id (primary constraint)
+
+```sql
+INSERT INTO products (product_id, product_name, price, release_date) 
+VALUES (DEFAULT, 'Samsung Galaxy S24', 899.0, to_date('18-01-2024', 'dd-mm-yyyy'));
+
+INSERT INTO products (product_id, product_name, price, release_date) 
+VALUES (DEFAULT, 'Google Pixel 8 Pro', 999.0, to_date('12-10-2023', 'dd-mm-yyyy'));
+
+INSERT INTO products (product_id, product_name, price, release_date) 
+VALUES (DEFAULT, 'OnePlus 12', 749.99, to_date('05-02-2024', 'dd-mm-yyyy'));
+```
+
+```sql
+create table sales_order
+(
+    order_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+   order_date DATE, 
+   quantity INT, 
+   prod_id INT REFERENCES products(product_id), 
+   status VARCHAR(30)
+)
+```
+
+> This is secondary constraint
+
+```sql
 CREATE TABLE products_backup
 AS
 SELECT * FROM products;
