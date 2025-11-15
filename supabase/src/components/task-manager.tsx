@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../supabase-client';
-import { Session } from '@supabase/supabase-js';
+import { useState } from 'react';
+
 
 interface Task {
   id: number;
