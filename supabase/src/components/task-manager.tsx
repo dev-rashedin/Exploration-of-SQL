@@ -10,29 +10,6 @@ interface Task {
   image_url: string;
 }
 
-const demoTasks: Task[] = [
-  {
-    id: 1,
-    title: 'First Task',
-    description: 'This is the first task',
-    created_at: '2023-01-01T00:00:00.000Z',
-    image_url: '',
-  },
-  {
-    id: 2,
-    title: 'Second Task',
-    description: 'This is the second task',
-    created_at: '2023-01-02T00:00:00.000Z',
-    image_url: '',
-  },
-  {
-    id: 3,
-    title: 'Third Task',
-    description: 'This is the third task',
-    created_at: '2023-01-03T00:00:00.000Z',
-    image_url: '',
-  },
-];
 
 function TaskManager() {
   const [newTask, setNewTask] = useState({ title: '', description: '' });
@@ -41,27 +18,42 @@ function TaskManager() {
 
   const [taskImage, setTaskImage] = useState<File | null>(null);
 
+   const fetchTasks = async () => {
+     const { error, data } = await supabase
+       .from('tasks')
+       .select('*')
+       .order('created_at', { ascending: false });
+
+     if (error) {
+       console.error('Error fetching tasks:', error.message);
+     } else {
+       setTasks(data);
+     }
+   };
 
 useEffect(() => {
-    const fetchTasks = async () => {
-      const { error, data } = await supabase
-        .from('tasks')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching tasks:', error.message);
-      } else {
-        setTasks(data);
-      }
-    };
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTasks();
 }, []);
   
-  
-  console.log('Current Tasks:', tasks);
 
+ const deleteTask = async (id: number) => {
+   const { error } = await supabase.from('tasks').delete().eq('id', id);
+
+   if (error) {
+     console.error('Error deleting task:', error.message);
+   } 
+   fetchTasks()
+  };
+  
+  const updateTask = async (id: number) => {
+    const { error } = await supabase.from('tasks').update({ description: newDescription }).eq('id', id);
+    if (error) {
+      console.error('Error updating task:', error.message);
+    }
+    fetchTasks()
+  }
+  
 
 
 
@@ -122,7 +114,7 @@ useEffect(() => {
 
       {/* List of Tasks */}
       <ul style={{ listStyle: 'none', padding: 0 }}>
-        {demoTasks.map((task, key) => (
+        {tasks.map((task, key) => (
           <li
             key={key}
             style={{
@@ -151,11 +143,12 @@ useEffect(() => {
                   onChange={(e) => setNewDescription(e.target.value)}
                 />
                 <button
+                  onClick={() => updateTask(task.id)}
                   style={{ padding: '0.5rem 1rem', marginRight: '0.5rem' }}
                 >
                   Edit
                 </button>
-                <button style={{ padding: '0.5rem 1rem' }}>Delete</button>
+                <button onClick={() => deleteTask(task.id)} style={{ padding: '0.5rem 1rem' }}>Delete</button>
               </div>
             </div>
           </li>
