@@ -9,12 +9,46 @@ interface Task {
   image_url: string;
 }
 
+const demoTasks: Task[] = [
+  {
+    id: 1,
+    title: 'First Task',
+    description: 'This is the first task',
+    created_at: '2023-01-01T00:00:00.000Z',
+    image_url: '',
+  },
+  {
+    id: 2,
+    title: 'Second Task',
+    description: 'This is the second task',
+    created_at: '2023-01-02T00:00:00.000Z',
+    image_url: '',
+  },
+  {
+    id: 3,
+    title: 'Third Task',
+    description: 'This is the third task',
+    created_at: '2023-01-03T00:00:00.000Z',
+    image_url: '',
+  },
+];
+
 function TaskManager() {
   const [newTask, setNewTask] = useState({ title: '', description: '' });
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newDescription, setNewDescription] = useState('');
 
   const [taskImage, setTaskImage] = useState<File | null>(null);
+
+
+  console.log('Task Image:', taskImage);
+  console.log('new task', newTask);
+  console.log('tasks', tasks);
+  console.log('new description', newDescription);
+
+
+
+  
 
 
 
@@ -49,7 +83,7 @@ function TaskManager() {
 
       {/* List of Tasks */}
       <ul style={{ listStyle: 'none', padding: 0 }}>
-        {tasks.map((task, key) => (
+        {demoTasks.map((task, key) => (
           <li
             key={key}
             style={{
@@ -63,7 +97,7 @@ function TaskManager() {
               <h3>{task.title}</h3>
               <p>{task.description}</p>
               <img src={task.image_url} style={{ height: 70 }} />
-              <div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
                 <textarea
                   placeholder='Updated description...'
                   onChange={(e) => setNewDescription(e.target.value)}
