@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { supabase } from '../supabase-client';
 
 
@@ -42,9 +42,31 @@ function TaskManager() {
   const [taskImage, setTaskImage] = useState<File | null>(null);
 
 
+useEffect(() => {
+    const fetchTasks = async () => {
+      const { error, data } = await supabase
+        .from('tasks')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching tasks:', error.message);
+      } else {
+        setTasks(data);
+      }
+    };
+
+    fetchTasks();
+}, []);
+  
+  
+  console.log('Current Tasks:', tasks);
 
 
-  const handleSubmit = async (e: any) => {
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error, data } = await supabase.from('tasks').insert(newTask).single()
     
@@ -75,7 +97,7 @@ function TaskManager() {
           style={{ width: '100%', marginBottom: '0.5rem', padding: '0.5rem' }}
         />
         <textarea
-          placeholder='Task Description' 
+          placeholder='Task Description'
           onChange={(e) =>
             setNewTask((prev) => ({ ...prev, description: e.target.value }))
           }
@@ -113,7 +135,9 @@ function TaskManager() {
             <div>
               <h3>{task.title}</h3>
               <p>{task.description}</p>
-              <img src={task.image_url} style={{ height: 70 }} />
+              {task.image_url && (
+                <img src={task.image_url} style={{ height: 70 }} />
+              )}
               <div
                 style={{
                   display: 'flex',
