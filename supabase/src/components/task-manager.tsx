@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '../supabase-client';
 
 
 interface Task {
@@ -41,13 +42,20 @@ function TaskManager() {
   const [taskImage, setTaskImage] = useState<File | null>(null);
 
 
-  console.log('Task Image:', taskImage);
-  console.log('new task', newTask);
-  console.log('tasks', tasks);
-  console.log('new description', newDescription);
 
 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const { error, data } = await supabase.from('tasks').insert(newTask).single()
+    
+    if (error) {
+      console.error('Error inserting task:', error.message);
+    }
 
+    setNewTask({ title: '', description: '' })
+    console.log('Inserted task:', data);
+    alert('Task added successfully!');
+  }
   
 
 
@@ -57,7 +65,7 @@ function TaskManager() {
       <h2>Task Manager CRUD</h2>
 
       {/* Form to add a new task */}
-      <form style={{ marginBottom: '1rem' }}>
+      <form onSubmit={handleSubmit} style={{ marginBottom: '1rem' }}>
         <input
           type='text'
           placeholder='Task Title'
@@ -67,14 +75,23 @@ function TaskManager() {
           style={{ width: '100%', marginBottom: '0.5rem', padding: '0.5rem' }}
         />
         <textarea
-          placeholder='Task Description'
+          placeholder='Task Description' 
           onChange={(e) =>
             setNewTask((prev) => ({ ...prev, description: e.target.value }))
           }
           style={{ width: '100%', marginBottom: '0.5rem', padding: '0.5rem' }}
         />
 
-        <input type='file' accept='image/*'  />
+        <input
+          type='file'
+          accept='image/*'
+          style={{
+            border: '1px solid gray',
+            padding: '7px',
+            borderRadius: '4px',
+            marginRight: '1rem',
+          }}
+        />
 
         <button type='submit' style={{ padding: '0.5rem 1rem' }}>
           Add Task
@@ -97,7 +114,14 @@ function TaskManager() {
               <h3>{task.title}</h3>
               <p>{task.description}</p>
               <img src={task.image_url} style={{ height: 70 }} />
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '1rem',
+                  alignItems: 'center',
+                }}
+              >
                 <textarea
                   placeholder='Updated description...'
                   onChange={(e) => setNewDescription(e.target.value)}
@@ -107,11 +131,7 @@ function TaskManager() {
                 >
                   Edit
                 </button>
-                <button
-                  style={{ padding: '0.5rem 1rem' }}
-                >
-                  Delete
-                </button>
+                <button style={{ padding: '0.5rem 1rem' }}>Delete</button>
               </div>
             </div>
           </li>
