@@ -10,13 +10,21 @@ function App() {
 
   const fetchSession = async () => {
     const currentSession = await supabase.auth.getSession();
-    console.log(currentSession);
     setSession(currentSession.data.session);
   }
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSession();
+
+    const {data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    })
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    }
+
   }, []);
 
   const handleLogout = async () => {
@@ -33,7 +41,7 @@ function App() {
       {session ? (
         <>
           <button onClick={() => handleLogout()}>Logout</button>
-          <TaskManager />
+          <TaskManager session={session} />
         </>
       ) : (
         <Auth />

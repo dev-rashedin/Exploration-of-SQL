@@ -1,5 +1,6 @@
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../supabase-client';
+import { type Session } from '@supabase/supabase-js';
 
 
 interface Task {
@@ -11,67 +12,71 @@ interface Task {
 }
 
 
-function TaskManager() {
+function TaskManager({ session }: { session: Session }) {
   const [newTask, setNewTask] = useState({ title: '', description: '' });
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newDescription, setNewDescription] = useState('');
 
-  const [taskImage, setTaskImage] = useState<File | null>(null);
+  // const [taskImage, setTaskImage] = useState<File | null>(null);
 
-   const fetchTasks = async () => {
-     const { error, data } = await supabase
-       .from('tasks')
-       .select('*')
-       .order('created_at', { ascending: false });
+  const fetchTasks = async () => {
+    const { error, data } = await supabase
+      .from('tasks')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-     if (error) {
-       console.error('Error fetching tasks:', error.message);
-     } else {
-       setTasks(data);
-     }
-   };
+    if (error) {
+      console.error('Error fetching tasks:', error.message);
+    } else {
+      setTasks(data);
+    }
+  };
 
-useEffect(() => {
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTasks();
-}, []);
-  
+  }, []);
 
- const deleteTask = async (id: number) => {
-   const { error } = await supabase.from('tasks').delete().eq('id', id);
+  const deleteTask = async (id: number) => {
+    const { error } = await supabase.from('tasks').delete().eq('id', id);
 
-   if (error) {
-     console.error('Error deleting task:', error.message);
-   } 
-   fetchTasks()
+    if (error) {
+      console.error('Error deleting task:', error.message);
+    }
+    fetchTasks();
   };
-  
+
   const updateTask = async (id: number) => {
-    const { error } = await supabase.from('tasks').update({ description: newDescription }).eq('id', id);
+    console.log('Updating task id:', id, 'with description:', newDescription);
+    const { error } = await supabase
+      .from('tasks')
+      .update({ description: newDescription })
+      .eq('id', id);
     if (error) {
       console.error('Error updating task:', error.message);
     }
-    fetchTasks()
-  }
-  
+    setNewDescription('');
+    fetchTasks();
+  };
 
-
-
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { error } = await supabase.from('tasks').insert(newTask).single()
-    
+    const { error } = await supabase
+      .from('tasks')
+      .insert({ ...newTask, email: session.user.email || '' })
+      .single();
+
     if (error) {
       console.error('Error inserting task:', error.message);
+      return;
     }
-
-    setNewTask({ title: '', description: '' })
-    fetchTasks()
-  }
   
-
-
+    alert('Task added successfully!');
+    setNewTask({ title: '', description: '' });
+    // use currentTarget which is correctly typed as HTMLFormElement
+    e.currentTarget.reset();
+    fetchTasks();
+  };
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '1rem' }}>
@@ -111,11 +116,9 @@ useEffect(() => {
         </button>
       </form>
 
-      <h2 style={{ marginTop: '3rem', fontSize: '2rem' }}>
-        All Pending Tasks
-      </h2>
+      <h2 style={{ marginTop: '3rem', fontSize: '2rem' }}>All Pending Tasks</h2>
       {/* List of Tasks */}
-      <ul style={{ listStyle: 'none', padding: 0,  }}>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {tasks.map((task, key) => (
           <li
             key={key}
