@@ -30,10 +30,13 @@ export const Auth = () => {
         password,
      });
       if (signInError) {
+        alert( signInError.message);
         console.error('Error signing in:', signInError.message);
         return;
       }
     }
+
+    alert('Sign-in successful!');
 
   };
 
