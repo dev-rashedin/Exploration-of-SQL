@@ -60,15 +60,14 @@ useEffect(() => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error, data } = await supabase.from('tasks').insert(newTask).single()
+    const { error } = await supabase.from('tasks').insert(newTask).single()
     
     if (error) {
       console.error('Error inserting task:', error.message);
     }
 
     setNewTask({ title: '', description: '' })
-    console.log('Inserted task:', data);
-    alert('Task added successfully!');
+    fetchTasks()
   }
   
 
@@ -112,16 +111,20 @@ useEffect(() => {
         </button>
       </form>
 
+      <h2 style={{ marginTop: '3rem', fontSize: '2rem' }}>
+        All Pending Tasks
+      </h2>
       {/* List of Tasks */}
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul style={{ listStyle: 'none', padding: 0,  }}>
         {tasks.map((task, key) => (
           <li
             key={key}
             style={{
-              border: '1px solid #ccc',
-              borderRadius: '4px',
+              border: '1px solid #bbbbbbff',
+              borderRadius: '8px',
               padding: '1rem',
-              marginBottom: '0.5rem',
+              margin: '1rem 0',
+              backgroundColor: '#363636ff',
             }}
           >
             <div>
@@ -148,7 +151,12 @@ useEffect(() => {
                 >
                   Edit
                 </button>
-                <button onClick={() => deleteTask(task.id)} style={{ padding: '0.5rem 1rem' }}>Delete</button>
+                <button
+                  onClick={() => deleteTask(task.id)}
+                  style={{ padding: '0.5rem 1rem' }}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </li>
