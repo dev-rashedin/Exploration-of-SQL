@@ -34,19 +34,19 @@ export const Auth = () => {
         />
         <button
           type='submit'
-          style={{ padding: '0.5rem 1rem', marginRight: '0.5rem' }}
+          style={{  margin: '0.5rem 0', width: '100%', border: '1px solid #3e3e3eff' }}
         >
           {isSignUp ? 'Sign Up' : 'Sign In'}
         </button>
       </form>
-      <button
+      <a
         onClick={() => {
           setIsSignUp(!isSignUp);
         }}
         style={{ padding: '0.5rem 1rem' }}
       >
         {isSignUp ? 'Switch to Sign In' : 'Switch to Sign Up'}
-      </button>
+      </a>
     </div>
   );
 };
