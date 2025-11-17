@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import { supabase } from '../supabase-client';
 import { type Session } from '@supabase/supabase-js';
 
@@ -18,7 +18,7 @@ function TaskManager({ session }: { session: Session }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newDescription, setNewDescription] = useState('');
 
-  // const [taskImage, setTaskImage] = useState<File | null>(null);
+  const [taskImage, setTaskImage] = useState<File | null>(null);
 
   const fetchTasks = async () => {
     const { error, data } = await supabase
@@ -106,11 +106,41 @@ function TaskManager({ session }: { session: Session }) {
     fetchTasks();
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const uploadImage = async (file: File) : Promise<string | null> => {
+    const filePath = `${file.name}-${Date.now()}`;
+    
+    const {  error } = await supabase.storage
+      .from('tasks-images')
+      .upload(filePath, file, {
+        upsert: false,
+        cacheControl: '3600',
+      });
+  
+    
+
+    if (error) {
+      console.error('Error uploading image:', error.message);
+      return null;
+    }
+
+    const { data } = supabase.storage.from('tasks-images').getPublicUrl(filePath);
+    
+    return data.publicUrl;
+
+  }
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    let imageUrl: string | null = null;
+    
+    if (taskImage) { 
+      imageUrl = await uploadImage(taskImage);
+    }  
+
     const { error } = await supabase
       .from('tasks')
-      .insert({ ...newTask, email: session.user.email || '' })
+      .insert({ ...newTask, email: session.user.email || '', image_url: imageUrl })
       .single();
 
     if (error) {
@@ -124,6 +154,12 @@ function TaskManager({ session }: { session: Session }) {
     fetchTasks();
     e.currentTarget.reset();
   };
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) { 
+      setTaskImage(e.target.files[0]);
+    }
+  }    
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '1rem' }}>
@@ -150,6 +186,7 @@ function TaskManager({ session }: { session: Session }) {
         <input
           type='file'
           accept='image/*'
+          onChange={handleFileChange}
           style={{
             border: '1px solid gray',
             padding: '7px',
