@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase-client';
 import { type Session } from '@supabase/supabase-js';
@@ -32,23 +33,56 @@ function TaskManager({ session }: { session: Session }) {
     }
   };
 
+  // Initial fetch
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTasks();
   }, []);
 
+  // Realtime subscriptions
   useEffect(() => {
-    const channel = supabase.channel("tasks-channel");
+    const channel = supabase
+      .channel('tasks-channel')
+      // INSERT
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'tasks' },
+        (payload) => {
+          const newTask = payload.new as Task;
+          setTasks((prev) => [...prev, newTask]);
+        }
+      )
+      // UPDATE
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'tasks' },
+        (payload) => {
+          const updatedTask = payload.new as Task;
+          setTasks((prev) =>
+            prev.map((task) =>
+              task.id === updatedTask.id ? updatedTask : task
+            )
+          );
+        }
+      )
+      // DELETE
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'tasks' },
+        (payload) => {
+          const deletedId = payload.old.id;
+          setTasks((prev) => prev.filter((task) => task.id !== deletedId));
+        }
+      )
+      .subscribe((status) => {
+        console.log('Subscription:', status);
+      });
 
-    channel.on("postgres_changes", { event: "insert", schema: "public", table: "tasks" }, (payload : any) => {
-      const newTask = payload.new as Task;
-      setTasks((prev) => [...prev, newTask]);
-    })
-  
     return () => {
-      
-    }
+      supabase.removeChannel(channel);
+    };
   }, []);
+
 
   const deleteTask = async (id: number) => {
     const { error } = await supabase.from('tasks').delete().eq('id', id);
@@ -87,8 +121,8 @@ function TaskManager({ session }: { session: Session }) {
     alert('Task added successfully!');
     setNewTask({ title: '', description: '' });
     // use currentTarget which is correctly typed as HTMLFormElement
-    e.currentTarget.reset();
     fetchTasks();
+    e.currentTarget.reset();
   };
 
   return (
