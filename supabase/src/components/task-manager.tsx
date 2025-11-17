@@ -37,6 +37,19 @@ function TaskManager({ session }: { session: Session }) {
     fetchTasks();
   }, []);
 
+  useEffect(() => {
+    const channel = supabase.channel("tasks-channel");
+
+    channel.on("postgres_changes", { event: "insert", schema: "public", table: "tasks" }, (payload : any) => {
+      const newTask = payload.new as Task;
+      setTasks((prev) => [...prev, newTask]);
+    })
+  
+    return () => {
+      
+    }
+  }, []);
+
   const deleteTask = async (id: number) => {
     const { error } = await supabase.from('tasks').delete().eq('id', id);
 
